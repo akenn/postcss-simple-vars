@@ -14,7 +14,15 @@ var variable = function (variables, node, str, name, opts, result) {
             return str;
         }
 
-    } if ( typeof variables[name] !== 'undefined' ) {
+    } if (name.indexOf('.') > -1) {
+      var keys = name.split('.');
+      var value = variables[keys[0]];
+      for (var i = 1; i < keys.length; i++) {
+        value = value[keys[i]];
+      }
+      return value;
+
+    } else if ( typeof variables[name] !== 'undefined' ) {
         return variables[name];
 
     } else if ( opts.silent ) {
@@ -37,7 +45,7 @@ var simpleSyntax = function (variables, node, str, opts, result) {
 };
 
 var inStringSyntax = function (variables, node, str, opts, result) {
-    return str.replace(/\$\(\s*([\w\d-_]+)\s*\)/g, function (all, name) {
+    return str.replace(/\$\(\s*([\w\d-_.]+)\s*\)/g, function (all, name) {
         return variable(variables, node, all, name, opts, result);
     });
 };
